@@ -283,16 +283,36 @@ export default function FrequencyFarmsLanding() {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | sending | done
 
-  function submitLead(e) {
+  // Submissions go to Netlify Forms. The matching static form definitions
+  // live in public/__forms.html - field names there must match these.
+  async function sendToNetlify(formName, fields) {
+    const body = new URLSearchParams({ "form-name": formName, ...fields }).toString();
+    const res = await fetch("/__forms.html", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+    });
+    if (!res.ok) throw new Error(`Form submit failed: ${res.status}`);
+  }
+
+  async function submitLead(e, source) {
     e.preventDefault();
     if (!name || !email || !consent || status === "sending") return;
     setStatus("sending");
-    // TODO: replace with a real lead-capture endpoint. Send { name, phone,
-    // email, consent } to your CRM/ESP/SMS provider.
-    setTimeout(() => {
+    try {
+      await sendToNetlify("signup", {
+        name,
+        phone,
+        email,
+        consent: consent ? "yes" : "no",
+        source,
+      });
       setStatus("done");
       if (!gateComplete) completeGate();
-    }, 600);
+    } catch (err) {
+      setStatus("idle");
+      alert("Something went wrong. Please try again.");
+    }
   }
 
   // ---------- Wholesale / retailer inquiry ----------
@@ -306,14 +326,23 @@ export default function FrequencyFarmsLanding() {
   const [wMessage, setWMessage] = useState("");
   const [wStatus, setWStatus] = useState("idle"); // idle | sending | done
 
-  function submitWholesale(e) {
+  async function submitWholesale(e) {
     e.preventDefault();
     if (!wBusiness || !wContact || !wEmail || wStatus === "sending") return;
     setWStatus("sending");
-    // TODO: replace with a real wholesale-inquiry endpoint. Send
-    // { business: wBusiness, contact: wContact, email: wEmail, phone: wPhone,
-    // message: wMessage } to your CRM or a dedicated wholesale inbox.
-    setTimeout(() => setWStatus("done"), 600);
+    try {
+      await sendToNetlify("wholesale", {
+        business: wBusiness,
+        contact: wContact,
+        email: wEmail,
+        phone: wPhone,
+        message: wMessage,
+      });
+      setWStatus("done");
+    } catch (err) {
+      setWStatus("idle");
+      alert("Something went wrong. Please try again.");
+    }
   }
 
   return (
@@ -347,7 +376,7 @@ export default function FrequencyFarmsLanding() {
                 and alerts when a strain lands at a dispensary near you.
               </p>
 
-              <form className="ff-join-form ff-agegate-form" onSubmit={submitLead}>
+              <form className="ff-join-form ff-agegate-form" onSubmit={(e) => submitLead(e, "gate")}>
                 <div className="ff-join-row">
                   <input
                     type="text"
@@ -690,7 +719,7 @@ export default function FrequencyFarmsLanding() {
               your inbox.
             </p>
           ) : (
-            <form className="ff-join-form" onSubmit={submitLead}>
+            <form className="ff-join-form" onSubmit={(e) => submitLead(e, "page")}>
               <div className="ff-join-row">
                 <input
                   type="text"
