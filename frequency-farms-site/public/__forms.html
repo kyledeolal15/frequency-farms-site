@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
+    <title>Forms</title>
+  </head>
+  <body>
+    <!-- Netlify reads these at deploy time so it knows which forms exist.
+         Visitors never see this page. Field names must match the site code. -->
+    <form name="signup" data-netlify="true" hidden>
+      <input type="text" name="name" />
+      <input type="tel" name="phone" />
+      <input type="email" name="email" />
+      <input type="text" name="consent" />
+      <input type="text" name="source" />
+    </form>
+
+    <form name="wholesale" data-netlify="true" hidden>
+      <input type="text" name="business" />
+      <input type="text" name="contact" />
+      <input type="email" name="email" />
+      <input type="tel" name="phone" />
+      <textarea name="message"></textarea>
+    </form>
+  </body>
+</html>
