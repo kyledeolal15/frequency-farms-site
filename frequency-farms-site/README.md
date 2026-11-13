@@ -109,11 +109,13 @@ add a strain there and it gets a page automatically.
 - **Never change a slug after bags are printed.** To rename a strain,
   edit `name`. If a slug must change, add a redirect from the old one
   in `next.config.js`.
-- **Fill in details** (spectrum, genetics, flavor, terpenes) per strain
-  in `lib/strains.js`. Anything left blank is simply not shown.
-- **3D renderings:** put `<slug>.glb` (and optionally `<slug>.webp` as
-  the loading still) in `public/models/`, then set `model: true` on that
-  strain. Keep each `.glb` under about 5 MB.
+- **Edit details** (spectrum state, genetics, flavor, aroma, effects,
+  terpenes, story) per strain in `lib/strains.js`. Anything left blank
+  is simply not shown. Total THC is deliberately not shown until each
+  batch has a real COA.
+- **3D bud:** the viewer draws a generic 3D bud on every page. A strain
+  can also have a batch video: put `<slug>.mp4` and `<slug>-poster.jpg`
+  in `public/strain/` and set `video` and `poster` on that strain.
 - **QR files** live in `qr/` (SVG for print, PNG for preview). To
   regenerate after changing slugs, run `python3 scripts/generate-qr.py`
   (needs `pip install opencv-python numpy pillow`).
