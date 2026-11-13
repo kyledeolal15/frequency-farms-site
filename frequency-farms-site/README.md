@@ -100,6 +100,24 @@ before real traffic hits this:
 - A real **favicon** — drop a `favicon.ico` into `/public` and
   uncomment the line in `pages/index.js`.
 
+## QR codes and strain pages
+
+Every strain has a page at `/s/<slug>` (for example `/s/pink-runtz`),
+built from `lib/strains.js`. That file is the single source of truth:
+add a strain there and it gets a page automatically.
+
+- **Never change a slug after bags are printed.** To rename a strain,
+  edit `name`. If a slug must change, add a redirect from the old one
+  in `next.config.js`.
+- **Fill in details** (spectrum, genetics, flavor, terpenes) per strain
+  in `lib/strains.js`. Anything left blank is simply not shown.
+- **3D renderings:** put `<slug>.glb` (and optionally `<slug>.webp` as
+  the loading still) in `public/models/`, then set `model: true` on that
+  strain. Keep each `.glb` under about 5 MB.
+- **QR files** live in `qr/` (SVG for print, PNG for preview). To
+  regenerate after changing slugs, run `python3 scripts/generate-qr.py`
+  (needs `pip install opencv-python numpy pillow`).
+
 ## Making changes later
 
 Once this is live, any edit is the same loop: change the file on
